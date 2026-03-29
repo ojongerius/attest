@@ -190,6 +190,10 @@ By action type:
   filesystem.file.create         1
 ```
 
+## Background
+
+Attest builds on concepts proven in the [beacon](https://github.com/ojongerius/beacon) prototype — a transparent MCP audit proxy with intent-to-action tracing. Beacon demonstrated STDIO interception, JSON-RPC parsing, and SQLite logging for MCP tool calls. Attest takes those ideas and adds a formal protocol layer: W3C Verifiable Credentials, Ed25519 signing, RFC 8785 canonical hashing, and hash-chained tamper evidence.
+
 ## License
 
 Apache 2.0 — see [LICENSE](LICENSE).
