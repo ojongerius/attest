@@ -22,6 +22,16 @@ pnpm run test         # vitest run
 pnpm run test:watch   # vitest
 ```
 
+## Project structure
+
+```
+src/
+  receipt/      # receipt creation, signing, chain management
+  store/        # SQLite persistence
+  taxonomy/     # action type mapping + risk levels
+  proxy/        # MCP proxy emitter
+```
+
 ## Code conventions
 
 - Use `import type` for type-only imports (enforced by `verbatimModuleSyntax`)
