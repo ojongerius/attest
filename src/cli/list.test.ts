@@ -1,44 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import type { ActionReceipt } from "../receipt/types.js";
-import { CONTEXT, CREDENTIAL_TYPE, VERSION } from "../receipt/types.js";
 import type { ReceiptStore } from "../store/store.js";
 import { openStore } from "../store/store.js";
+import { makeReceipt } from "../test-utils/receipts.js";
 import { runList } from "./list.js";
-
-function makeReceipt(overrides: {
-	id?: string;
-	sequence?: number;
-	chainId?: string;
-	actionType?: string;
-	riskLevel?: "low" | "medium" | "high" | "critical";
-	status?: "success" | "failure" | "pending";
-	timestamp?: string;
-}): ActionReceipt {
-	return {
-		"@context": CONTEXT,
-		id: overrides.id ?? "urn:receipt:test-1",
-		type: CREDENTIAL_TYPE,
-		version: VERSION,
-		issuer: { id: "did:agent:test" },
-		issuanceDate: "2026-03-29T14:00:00Z",
-		credentialSubject: {
-			principal: { id: "did:user:test" },
-			action: {
-				id: "act_1",
-				type: overrides.actionType ?? "filesystem.file.read",
-				risk_level: overrides.riskLevel ?? "low",
-				timestamp: overrides.timestamp ?? "2026-03-29T14:00:00Z",
-			},
-			outcome: { status: overrides.status ?? "success" },
-			chain: {
-				sequence: overrides.sequence ?? 1,
-				previous_receipt_hash: null,
-				chain_id: overrides.chainId ?? "chain_test",
-			},
-		},
-		proof: { type: "Ed25519Signature2020", proofValue: "utest" },
-	};
-}
 
 describe("runList", () => {
 	let store: ReceiptStore;

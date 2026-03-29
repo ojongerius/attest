@@ -48,6 +48,19 @@ interface ReceiptRow {
 	receipt_json: string;
 }
 
+const DEFAULT_QUERY_LIMIT = 10000;
+
+/**
+ * Parse a receipt JSON string from the store, with error context.
+ */
+function parseReceiptJson(json: string, context: string): ActionReceipt {
+	try {
+		return JSON.parse(json) as ActionReceipt;
+	} catch (cause) {
+		throw new Error(`Corrupt receipt in store (${context}): ${cause}`);
+	}
+}
+
 /**
  * SQLite-backed receipt store.
  */
@@ -95,7 +108,7 @@ export class ReceiptStore {
 		const row = this.db
 			.prepare("SELECT receipt_json FROM receipts WHERE id = ?")
 			.get(id) as ReceiptRow | undefined;
-		return row ? (JSON.parse(row.receipt_json) as ActionReceipt) : undefined;
+		return row ? parseReceiptJson(row.receipt_json, `id=${id}`) : undefined;
 	}
 
 	/**
@@ -107,7 +120,9 @@ export class ReceiptStore {
 				"SELECT receipt_json FROM receipts WHERE chain_id = ? ORDER BY sequence ASC",
 			)
 			.all(chainId) as unknown as ReceiptRow[];
-		return rows.map((r) => JSON.parse(r.receipt_json) as ActionReceipt);
+		return rows.map((r) =>
+			parseReceiptJson(r.receipt_json, `chain=${chainId}`),
+		);
 	}
 
 	/**
@@ -144,19 +159,17 @@ export class ReceiptStore {
 
 		const where =
 			conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
-		const limitClause = filters.limit !== undefined ? "LIMIT ?" : "";
 
-		if (filters.limit !== undefined) {
-			params.push(String(filters.limit));
-		}
+		const limit = filters.limit ?? DEFAULT_QUERY_LIMIT;
+		params.push(String(limit));
 
 		const rows = this.db
 			.prepare(
-				`SELECT receipt_json FROM receipts ${where} ORDER BY timestamp ASC ${limitClause}`,
+				`SELECT receipt_json FROM receipts ${where} ORDER BY timestamp ASC LIMIT ?`,
 			)
 			.all(...params) as unknown as ReceiptRow[];
 
-		return rows.map((r) => JSON.parse(r.receipt_json) as ActionReceipt);
+		return rows.map((r) => parseReceiptJson(r.receipt_json, "query"));
 	}
 
 	/**

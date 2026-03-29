@@ -1,4 +1,5 @@
 import { generateKeyPairSync, sign, verify } from "node:crypto";
+import { canonicalize } from "./hash.js";
 import type { ActionReceipt, Proof, UnsignedActionReceipt } from "./types.js";
 
 export interface KeyPair {
@@ -24,23 +25,10 @@ export function generateKeyPair(): KeyPair {
 }
 
 /**
- * Recursively sort object keys for deterministic serialization.
- *
- * Uses sorted-key JSON as a stepping stone;
- * full RFC 8785 (JCS) canonicalization is planned in issue #6.
+ * Serialize an unsigned receipt to bytes using RFC 8785 canonicalization.
  */
-function sortKeys(value: unknown): unknown {
-	if (value === null || typeof value !== "object") return value;
-	if (Array.isArray(value)) return value.map(sortKeys);
-	const sorted: Record<string, unknown> = {};
-	for (const key of Object.keys(value).sort()) {
-		sorted[key] = sortKeys((value as Record<string, unknown>)[key]);
-	}
-	return sorted;
-}
-
-function canonicalize(receipt: UnsignedActionReceipt): Buffer {
-	return Buffer.from(JSON.stringify(sortKeys(receipt)), "utf-8");
+function canonicalizeReceipt(receipt: UnsignedActionReceipt): Buffer {
+	return Buffer.from(canonicalize(receipt), "utf-8");
 }
 
 /**
@@ -51,7 +39,7 @@ export function signReceipt(
 	privateKey: string,
 	verificationMethod: string,
 ): ActionReceipt {
-	const data = canonicalize(unsigned);
+	const data = canonicalizeReceipt(unsigned);
 	const signature = sign(null, data, privateKey);
 
 	const proof: Proof = {
@@ -83,7 +71,7 @@ export function verifyReceipt(
 		return false;
 	}
 
-	const data = canonicalize(unsigned as UnsignedActionReceipt);
+	const data = canonicalizeReceipt(unsigned as UnsignedActionReceipt);
 	const signature = Buffer.from(proofValue.slice(1), "base64url");
 
 	return verify(null, data, publicKey, signature);

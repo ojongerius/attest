@@ -2,6 +2,7 @@ import { dirname, join } from "node:path";
 import { PassThrough } from "node:stream";
 import { fileURLToPath } from "node:url";
 import { afterEach, describe, expect, it } from "vitest";
+import { readLine } from "../test-utils/streams.js";
 import type { JsonRpcMessage } from "./proxy.js";
 import { McpProxy } from "./proxy.js";
 
@@ -131,23 +132,3 @@ describe("McpProxy", () => {
 		expect(() => proxy.start(clientIn, clientOut)).toThrow("already running");
 	});
 });
-
-function readLine(stream: PassThrough): Promise<string> {
-	return new Promise((resolve, reject) => {
-		let buffer = "";
-		const timer = setTimeout(
-			() => reject(new Error("Timeout waiting for line")),
-			5000,
-		);
-		const onData = (chunk: Buffer) => {
-			buffer += chunk.toString();
-			const newlineIdx = buffer.indexOf("\n");
-			if (newlineIdx !== -1) {
-				clearTimeout(timer);
-				stream.off("data", onData);
-				resolve(buffer.slice(0, newlineIdx));
-			}
-		};
-		stream.on("data", onData);
-	});
-}

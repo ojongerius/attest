@@ -1,40 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { hashReceipt } from "../receipt/hash.js";
 import { generateKeyPair, signReceipt } from "../receipt/signing.js";
-import type { UnsignedActionReceipt } from "../receipt/types.js";
-import { CONTEXT, CREDENTIAL_TYPE, VERSION } from "../receipt/types.js";
 import type { ReceiptStore } from "../store/store.js";
 import { openStore } from "../store/store.js";
+import { makeUnsigned } from "../test-utils/receipts.js";
 import { runVerify } from "./verify.js";
-
-function makeUnsigned(
-	sequence: number,
-	previousHash: string | null,
-): UnsignedActionReceipt {
-	return {
-		"@context": CONTEXT,
-		id: `urn:receipt:verify-${sequence}`,
-		type: CREDENTIAL_TYPE,
-		version: VERSION,
-		issuer: { id: "did:agent:test" },
-		issuanceDate: "2026-03-29T14:00:00Z",
-		credentialSubject: {
-			principal: { id: "did:user:test" },
-			action: {
-				id: `act_${sequence}`,
-				type: "filesystem.file.read",
-				risk_level: "low",
-				timestamp: "2026-03-29T14:00:00Z",
-			},
-			outcome: { status: "success" },
-			chain: {
-				sequence,
-				previous_receipt_hash: previousHash,
-				chain_id: "chain_test",
-			},
-		},
-	};
-}
 
 describe("runVerify", () => {
 	let store: ReceiptStore;

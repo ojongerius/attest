@@ -72,36 +72,42 @@ export class ReceiptEmitter {
 
 		this.sequence++;
 
-		const unsigned = createReceipt({
-			issuer: this.config.issuer,
-			principal: this.config.principal,
-			action: {
-				type: classification.action_type,
-				risk_level: classification.risk_level,
-				...(parametersHash !== undefined && {
-					parameters_hash: parametersHash,
-				}),
-			},
-			outcome: {
-				status: error ? "failure" : "success",
-				...(error?.message !== undefined && { error: error.message }),
-			},
-			chain: {
-				sequence: this.sequence,
-				previous_receipt_hash: this.previousReceiptHash,
-				chain_id: this.chainId,
-			},
-		});
+		try {
+			const unsigned = createReceipt({
+				issuer: this.config.issuer,
+				principal: this.config.principal,
+				action: {
+					type: classification.action_type,
+					risk_level: classification.risk_level,
+					target: { system: "mcp", resource: request.toolName },
+					...(parametersHash !== undefined && {
+						parameters_hash: parametersHash,
+					}),
+				},
+				outcome: {
+					status: error ? "failure" : "success",
+					...(error?.message !== undefined && { error: error.message }),
+				},
+				chain: {
+					sequence: this.sequence,
+					previous_receipt_hash: this.previousReceiptHash,
+					chain_id: this.chainId,
+				},
+			});
 
-		const signed = signReceipt(
-			unsigned,
-			this.config.privateKey,
-			this.config.verificationMethod,
-		);
+			const signed = signReceipt(
+				unsigned,
+				this.config.privateKey,
+				this.config.verificationMethod,
+			);
 
-		const receiptHash = hashReceipt(signed);
-		this.config.store.insert(signed, receiptHash);
-		this.previousReceiptHash = receiptHash;
+			const receiptHash = hashReceipt(signed);
+			this.config.store.insert(signed, receiptHash);
+			this.previousReceiptHash = receiptHash;
+		} catch {
+			// Rollback sequence so the chain stays consistent
+			this.sequence--;
+		}
 	}
 
 	/**

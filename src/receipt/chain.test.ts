@@ -1,38 +1,8 @@
 import { describe, expect, it } from "vitest";
+import { makeUnsigned } from "../test-utils/receipts.js";
 import { verifyChain } from "./chain.js";
 import { hashReceipt } from "./hash.js";
 import { generateKeyPair, signReceipt } from "./signing.js";
-import type { UnsignedActionReceipt } from "./types.js";
-import { CONTEXT, CREDENTIAL_TYPE, VERSION } from "./types.js";
-
-function makeUnsigned(
-	sequence: number,
-	previousHash: string | null,
-): UnsignedActionReceipt {
-	return {
-		"@context": CONTEXT,
-		id: `urn:receipt:${sequence}`,
-		type: CREDENTIAL_TYPE,
-		version: VERSION,
-		issuer: { id: "did:agent:test" },
-		issuanceDate: "2026-03-29T14:31:00Z",
-		credentialSubject: {
-			principal: { id: "did:user:test" },
-			action: {
-				id: `act_${sequence}`,
-				type: "filesystem.file.read",
-				risk_level: "low",
-				timestamp: "2026-03-29T14:31:00Z",
-			},
-			outcome: { status: "success" },
-			chain: {
-				sequence,
-				previous_receipt_hash: previousHash,
-				chain_id: "chain_test",
-			},
-		},
-	};
-}
 
 function buildChain(count: number, privateKey: string) {
 	const receipts = [];
