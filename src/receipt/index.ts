@@ -1,3 +1,4 @@
+export { canonicalize, hashReceipt, sha256 } from "./hash.js";
 export {
 	type ActionReceipt,
 	type ActionTarget,
