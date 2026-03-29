@@ -4,20 +4,20 @@ Cryptographically signed audit trail for AI agent actions.
 
 Attest is an open protocol and reference implementation for **Action Receipts** — signed, hash-chained records of what an AI agent did, why, whether it succeeded, and whether it can be undone.
 
-> **See also:** [beacon](https://github.com/ojongerius/beacon) — the prototype that preceded this project.
->
-> | | [Beacon](https://github.com/ojongerius/beacon) | [Attest](https://github.com/ojongerius/attest) |
-> |---|---|---|
-> | **Focus** | Audit proxy prototype | Open protocol + reference implementation |
-> | **STDIO proxy** | ✓ | ✓ |
-> | **JSON-RPC interception** | ✓ | ✓ |
-> | **SQLite logging** | ✓ | ✓ |
-> | **Cryptographic signing** | — | Ed25519 |
-> | **Hash-chained receipts** | — | SHA-256 + RFC 8785 |
-> | **W3C Verifiable Credentials** | — | ✓ |
-> | **Action taxonomy** | Basic | 15 types with risk levels |
-> | **Chain verification CLI** | — | ✓ |
-> | **Formal spec** | — | [Action Receipt v0.1](docs/action-receipt-spec-v0.1.md) |
+**See also:** [beacon](https://github.com/ojongerius/beacon) — the prototype that preceded this project.
+
+ | | [Beacon](https://github.com/ojongerius/beacon) | [Attest](https://github.com/ojongerius/attest) |
+ |---|---|---|
+ | **Focus** | Audit proxy prototype | Open protocol + reference implementation |
+ | **STDIO proxy** | ✓ | ✓ |
+ | **JSON-RPC interception** | ✓ | ✓ |
+ | **SQLite logging** | ✓ | ✓ |
+ | **Cryptographic signing** | — | Ed25519 |
+ | **Hash-chained receipts** | — | SHA-256 + RFC 8785 |
+ | **W3C Verifiable Credentials** | — | ✓ |
+ | **Action taxonomy** | Basic | 15 types with risk levels |
+ | **Chain verification CLI** | — | ✓ |
+ | **Formal spec** | — | [Action Receipt v0.1](docs/action-receipt-spec-v0.1.md) |
 
 ## Why
 
