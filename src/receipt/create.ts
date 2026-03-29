@@ -26,7 +26,7 @@ export interface CreateReceiptInput {
 	intent?: Intent;
 	authorization?: Authorization;
 	/** Override the action timestamp (defaults to now). */
-	timestamp?: string;
+	actionTimestamp?: string;
 }
 
 /**
@@ -39,7 +39,7 @@ export function createReceipt(
 	input: CreateReceiptInput,
 ): UnsignedActionReceipt {
 	const now = new Date().toISOString();
-	const actionTimestamp = input.timestamp ?? now;
+	const actionTimestamp = input.actionTimestamp ?? now;
 
 	return {
 		"@context": CONTEXT,
@@ -52,7 +52,7 @@ export function createReceipt(
 			principal: input.principal,
 			action: {
 				...input.action,
-				id: `act_${randomUUID().slice(0, 8)}`,
+				id: `act_${randomUUID()}`,
 				timestamp: actionTimestamp,
 			},
 			outcome: input.outcome,

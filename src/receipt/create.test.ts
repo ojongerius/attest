@@ -27,8 +27,8 @@ describe("createReceipt", () => {
 	it("sets context, type, and version constants", () => {
 		const receipt = createReceipt(makeInput());
 
-		expect(receipt["@context"]).toBe(CONTEXT);
-		expect(receipt.type).toBe(CREDENTIAL_TYPE);
+		expect(receipt["@context"]).toEqual(CONTEXT);
+		expect(receipt.type).toEqual(CREDENTIAL_TYPE);
 		expect(receipt.version).toBe(VERSION);
 	});
 
@@ -50,7 +50,9 @@ describe("createReceipt", () => {
 	it("generates an action id", () => {
 		const receipt = createReceipt(makeInput());
 
-		expect(receipt.credentialSubject.action.id).toMatch(/^act_[0-9a-f]{8}$/);
+		expect(receipt.credentialSubject.action.id).toMatch(
+			/^act_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+		);
 	});
 
 	it("sets issuanceDate to current time", () => {
@@ -71,7 +73,7 @@ describe("createReceipt", () => {
 
 	it("allows overriding action timestamp", () => {
 		const receipt = createReceipt(
-			makeInput({ timestamp: "2026-01-01T00:00:00Z" }),
+			makeInput({ actionTimestamp: "2026-01-01T00:00:00Z" }),
 		);
 
 		expect(receipt.credentialSubject.action.timestamp).toBe(
