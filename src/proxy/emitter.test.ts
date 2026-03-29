@@ -6,6 +6,7 @@ import { hashReceipt } from "../receipt/hash.js";
 import { generateKeyPair, verifyReceipt } from "../receipt/signing.js";
 import type { ReceiptStore } from "../store/store.js";
 import { openStore } from "../store/store.js";
+import { readLine } from "../test-utils/streams.js";
 import type { EmitterConfig } from "./emitter.js";
 import { ReceiptEmitter } from "./emitter.js";
 import { ToolCallInterceptor } from "./interceptor.js";
@@ -170,23 +171,3 @@ describe("ReceiptEmitter", () => {
 		expect(chain[0]?.credentialSubject.principal.id).toBe("did:user:test");
 	});
 });
-
-function readLine(stream: PassThrough): Promise<string> {
-	return new Promise((resolve, reject) => {
-		let buffer = "";
-		const timer = setTimeout(
-			() => reject(new Error("Timeout waiting for line")),
-			5000,
-		);
-		const onData = (chunk: Buffer) => {
-			buffer += chunk.toString();
-			const newlineIdx = buffer.indexOf("\n");
-			if (newlineIdx !== -1) {
-				clearTimeout(timer);
-				stream.off("data", onData);
-				resolve(buffer.slice(0, newlineIdx));
-			}
-		};
-		stream.on("data", onData);
-	});
-}

@@ -34,6 +34,7 @@ export class McpProxy extends EventEmitter<McpProxyEvents> {
 	private serverReader: ReturnType<typeof createInterface> | undefined;
 	private readonly command: string;
 	private readonly args: string[];
+	private stopping = false;
 
 	constructor(command: string, args: string[] = []) {
 		super();
@@ -51,7 +52,7 @@ export class McpProxy extends EventEmitter<McpProxyEvents> {
 		clientIn: NodeJS.ReadableStream = process.stdin,
 		clientOut: NodeJS.WritableStream = process.stdout,
 	): void {
-		if (this.child) {
+		if (this.child || this.stopping) {
 			throw new Error("Proxy is already running");
 		}
 
@@ -106,6 +107,7 @@ export class McpProxy extends EventEmitter<McpProxyEvents> {
 	 */
 	stop(): void {
 		if (this.child) {
+			this.stopping = true;
 			const child = this.child;
 			this.cleanup();
 			child.kill();
@@ -118,6 +120,7 @@ export class McpProxy extends EventEmitter<McpProxyEvents> {
 		this.clientReader = undefined;
 		this.serverReader = undefined;
 		this.child = undefined;
+		this.stopping = false;
 	}
 
 	/**

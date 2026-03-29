@@ -1,5 +1,17 @@
-import type { ActionReceipt } from "../receipt/types.js";
+import type {
+	ActionReceipt,
+	OutcomeStatus,
+	RiskLevel,
+} from "../receipt/types.js";
 import type { ReceiptQuery, ReceiptStore } from "../store/store.js";
+
+const VALID_RISK_LEVELS = new Set<string>([
+	"low",
+	"medium",
+	"high",
+	"critical",
+]);
+const VALID_STATUSES = new Set<string>(["success", "failure", "pending"]);
 
 /**
  * Options for the `attest list` command.
@@ -41,9 +53,18 @@ export function runList(store: ReceiptStore, options: ListOptions): string {
 
 	if (options.chainId) query.chainId = options.chainId;
 	if (options.actionType) query.actionType = options.actionType;
-	if (options.riskLevel)
-		query.riskLevel = options.riskLevel as ReceiptQuery["riskLevel"];
-	if (options.status) query.status = options.status as ReceiptQuery["status"];
+	if (options.riskLevel) {
+		if (!VALID_RISK_LEVELS.has(options.riskLevel)) {
+			return `Invalid risk level "${options.riskLevel}". Must be: low, medium, high, critical.`;
+		}
+		query.riskLevel = options.riskLevel as RiskLevel;
+	}
+	if (options.status) {
+		if (!VALID_STATUSES.has(options.status)) {
+			return `Invalid status "${options.status}". Must be: success, failure, pending.`;
+		}
+		query.status = options.status as OutcomeStatus;
+	}
 	if (options.after) query.after = options.after;
 	if (options.before) query.before = options.before;
 	if (options.limit) query.limit = options.limit;
