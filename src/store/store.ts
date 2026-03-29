@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS receipts (
   created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX IF NOT EXISTS idx_receipts_chain ON receipts(chain_id, sequence);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_receipts_chain ON receipts(chain_id, sequence);
 CREATE INDEX IF NOT EXISTS idx_receipts_action ON receipts(action_type);
 CREATE INDEX IF NOT EXISTS idx_receipts_risk ON receipts(risk_level);
 CREATE INDEX IF NOT EXISTS idx_receipts_timestamp ON receipts(timestamp);
@@ -144,12 +144,15 @@ export class ReceiptStore {
 
 		const where =
 			conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
-		const limit =
-			filters.limit !== undefined ? `LIMIT ${Number(filters.limit)}` : "";
+		const limitClause = filters.limit !== undefined ? "LIMIT ?" : "";
+
+		if (filters.limit !== undefined) {
+			params.push(String(filters.limit));
+		}
 
 		const rows = this.db
 			.prepare(
-				`SELECT receipt_json FROM receipts ${where} ORDER BY timestamp ASC ${limit}`,
+				`SELECT receipt_json FROM receipts ${where} ORDER BY timestamp ASC ${limitClause}`,
 			)
 			.all(...params) as unknown as ReceiptRow[];
 
