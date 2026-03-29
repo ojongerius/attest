@@ -1,1 +1,5 @@
-// MCP proxy emitter
+export {
+	type JsonRpcMessage,
+	McpProxy,
+	type McpProxyEvents,
+} from "./proxy.js";
