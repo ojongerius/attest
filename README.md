@@ -13,8 +13,7 @@
 
 **AI agents act on your behalf. Attest proves what they did.**
 
-An open protocol and TypeScript reference implementation for **Action Receipts** — signed,
-hash-chained records of every action an AI agent takes.
+An open protocol for **Action Receipts** — signed, hash-chained records of every action an AI agent takes.
 Like [C2PA Content Credentials](https://c2pa.org/), but for agent actions instead of media files.
 
 [Spec](docs/action-receipt-spec-v0.1.md) &bull; [Quick Start](#quick-start) &bull; [CLI](#cli) &bull; [Claude Desktop Setup](#usage-with-claude-desktop)
@@ -42,7 +41,26 @@ Every agent action produces a **receipt** — a [W3C Verifiable Credential](http
 
 Receipts are hash-chained — if anyone modifies or deletes one, the chain breaks and you'll know.
 
-## Architecture
+The protocol is **agent-agnostic**. It does not assume MCP, OpenAI function calling, or any specific agent framework. Any agent that can produce JSON and sign it can emit receipts.
+
+See the [full specification](docs/action-receipt-spec-v0.1.md) for schema details, chain verification rules, and design decisions.
+
+## Action Taxonomy
+
+Attest defines a hierarchical vocabulary of action types organized by domain (`filesystem.file.read`, `communication.email.send`, `financial.payment.initiate`, etc.) with four risk levels:
+
+| Level | Description |
+|---|---|
+| `low` | Read-only or easily reversible |
+| `medium` | Modifies state but reversible or low-impact |
+| `high` | Significant state change, may be hard to reverse |
+| `critical` | Financial commitment or irreversible action |
+
+The taxonomy is extensible — implementations can add domain-specific types and override default risk levels via configuration.
+
+## Reference Implementation
+
+This repository contains a TypeScript reference implementation: an MCP proxy that sits between an MCP client and server, intercepting tool calls and emitting signed Action Receipts.
 
 ```
                          Attest Proxy
@@ -62,7 +80,7 @@ Receipts are hash-chained — if anyone modifies or deletes one, the chain break
 
 The proxy sits transparently between an MCP client and server. For each `tools/call` it creates a signed, hash-chained receipt and persists it locally.
 
-## Key features
+### Key features
 
 | | Feature | Detail |
 |:---|:---|:---|
@@ -74,7 +92,7 @@ The proxy sits transparently between an MCP client and server. For each `tools/c
 | **Agent-agnostic** | Works with any agent that produces JSON | MCP is first target, not the only one |
 | **150+ tests** | Comprehensive coverage | Zero external runtime dependencies |
 
-## Quick start
+### Quick start
 
 ```sh
 pnpm install
@@ -83,7 +101,7 @@ pnpm run test       # run all tests
 pnpm run check      # typecheck + lint
 ```
 
-## Usage with Claude Desktop
+### Usage with Claude Desktop
 
 Add `attest-proxy` as an MCP server wrapper in your `claude_desktop_config.json`:
 
@@ -110,7 +128,7 @@ Every tool call Claude makes through this server will produce a signed, hash-cha
 
 See [e2e/README.md](e2e/README.md) for a complete setup guide with a sample MCP server.
 
-## CLI
+### CLI
 
 ```sh
 attest list --db receipts.db                         # list all receipts
@@ -181,7 +199,7 @@ By action type:
 
 </details>
 
-## Project structure
+### Project structure
 
 ```
 src/
@@ -193,6 +211,15 @@ src/
 ```
 
 ## Roadmap
+
+### Protocol
+
+- Expand taxonomy to communication, documents, financial, and data domains
+- Multi-agent chain linking (delegation across agent boundaries)
+- Trusted timestamps (RFC 3161)
+- Formal standalone specification document
+
+### Implementation
 
 **Core implementation complete** — see the [full spec](docs/action-receipt-spec-v0.1.md).
 
