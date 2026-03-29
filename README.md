@@ -26,14 +26,14 @@ Parameters are hashed, not stored in plaintext. The human principal controls wha
 
 **Draft specification, pre-prototype.** See [docs/action-receipt-spec-v0.1.md](docs/action-receipt-spec-v0.1.md) for the full spec.
 
-## Phase 1 scope
+## Roadmap
 
-- TypeScript reference implementation
-- MCP proxy emitter (intercepts tool calls, emits receipts)
-- Ed25519 signing via Node.js crypto
-- SHA-256 hash-chained receipts (RFC 8785 canonicalization)
-- SQLite local receipt store
-- Filesystem and system action types (+ unknown fallback)
+| Milestone | Description | Status |
+|---|---|---|
+| [M1: Receipt Core](https://github.com/ojongerius/attest/milestone/1) | Create, sign, chain, and verify receipts | In progress |
+| [M2: Storage](https://github.com/ojongerius/attest/milestone/2) | SQLite persistence and querying | Planned |
+| [M3: MCP Proxy Emitter](https://github.com/ojongerius/attest/milestone/3) | Intercept MCP tool calls, emit receipts | Planned |
+| [M4: CLI](https://github.com/ojongerius/attest/milestone/4) | Verify, inspect, list, and export receipts | Planned |
 
 ## License
 
