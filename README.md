@@ -4,6 +4,21 @@ Cryptographically signed audit trail for AI agent actions.
 
 Attest is an open protocol and reference implementation for **Action Receipts** — signed, hash-chained records of what an AI agent did, why, whether it succeeded, and whether it can be undone.
 
+> **See also:** [beacon](https://github.com/ojongerius/beacon) — the prototype that preceded this project.
+>
+> | | [Beacon](https://github.com/ojongerius/beacon) | [Attest](https://github.com/ojongerius/attest) |
+> |---|---|---|
+> | **Focus** | Audit proxy prototype | Open protocol + reference implementation |
+> | **STDIO proxy** | ✓ | ✓ |
+> | **JSON-RPC interception** | ✓ | ✓ |
+> | **SQLite logging** | ✓ | ✓ |
+> | **Cryptographic signing** | — | Ed25519 |
+> | **Hash-chained receipts** | — | SHA-256 + RFC 8785 |
+> | **W3C Verifiable Credentials** | — | ✓ |
+> | **Action taxonomy** | Basic | 15 types with risk levels |
+> | **Chain verification CLI** | — | ✓ |
+> | **Formal spec** | — | [Action Receipt v0.1](docs/action-receipt-spec-v0.1.md) |
+
 ## Why
 
 AI agents act on behalf of humans — sending emails, modifying documents, executing commands. No open standard exists for recording these actions in a way that is tamper-evident, privacy-preserving, and machine-verifiable.
@@ -189,10 +204,6 @@ By action type:
   filesystem.file.read           2
   filesystem.file.create         1
 ```
-
-## Background
-
-Attest builds on concepts proven in the [beacon](https://github.com/ojongerius/beacon) prototype — a transparent MCP audit proxy with intent-to-action tracing. Beacon demonstrated STDIO interception, JSON-RPC parsing, and SQLite logging for MCP tool calls. Attest takes those ideas and adds a formal protocol layer: W3C Verifiable Credentials, Ed25519 signing, RFC 8785 canonical hashing, and hash-chained tamper evidence.
 
 ## License
 
