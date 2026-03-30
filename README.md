@@ -24,7 +24,11 @@ Like [C2PA Content Credentials](https://c2pa.org/), but for agent actions instea
 
 ## The problem
 
-AI agents send emails, modify documents, execute commands, and make purchases — with no standard way to record what happened. **93% of open-source agent projects use unscoped API keys with no audit trail.** The EU AI Act mandates traceability, but no standard format exists.
+If a regulator, auditor, or your own security team asked what your AI agents did last Tuesday — could you answer? Not what they were asked to do. What they *actually* did. Across which systems, in what order, with what outcomes. In a format someone could independently verify.
+
+For almost every organisation, the answer is no. AI agents send emails, modify documents, execute commands, and make purchases — but every vendor logs differently (if they log at all), in proprietary formats, with no way to verify the records haven't been tampered with. There's no unified view across tools. No chain of custody. No receipt.
+
+The EU AI Act mandates traceability for high-risk AI systems. The regulation exists. The standard for how to comply doesn't.
 
 ## How Attest solves it
 
@@ -44,6 +48,12 @@ Receipts are hash-chained — if anyone modifies or deletes one, the chain break
 The protocol is **agent-agnostic**. It does not assume MCP, OpenAI function calling, or any specific agent framework. Any agent that can produce JSON and sign it can emit receipts.
 
 See the [full specification](docs/action-receipt-spec-v0.1.md) for schema details, chain verification rules, and design decisions.
+
+## The goal
+
+Attest is a spec and reference implementation — the goal isn't adoption of this tool, it's adoption of the protocol. Imagine: your organisation runs Claude, ChatGPT, and a custom agent. All three emit Action Receipts in the same format. One audit trail, cryptographically signed, hash-chained, independently verifiable. Your compliance team can answer "what did our AI agents do?" without stitching together five different log formats.
+
+Getting there requires the spec to be shaped by people with real-world experience in compliance, audit, and regulated AI deployment. The most valuable contributions right now aren't code — they're domain expertise. If you work in a regulated industry deploying AI agents, [open an issue](https://github.com/ojongerius/attest/issues) or comment on the [spec](docs/action-receipt-spec-v0.1.md).
 
 ## Action Taxonomy
 
