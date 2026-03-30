@@ -75,7 +75,7 @@ The taxonomy is extensible — implementations can add domain-specific types and
 | [attest-protocol/spec](https://github.com/attest-protocol/spec) | Protocol specification, JSON Schemas, canonical taxonomy |
 | [attest-protocol/attest-ts](https://github.com/attest-protocol/attest-ts) | TypeScript SDK — receipt creation, signing, hashing, storage, taxonomy ([npm](https://www.npmjs.com/package/@attest-protocol/attest-ts)) |
 | **ojongerius/attest** (this repo) | MCP proxy + CLI — reference implementation built on the SDK |
-| [attest-protocol/attest-py](https://github.com/attest-protocol/attest-py) | Python SDK (planned) |
+| [attest-protocol/attest-py](https://github.com/attest-protocol/attest-py) | Python SDK ([PyPI](https://pypi.org/project/attest-protocol/)) |
 
 ## Reference Implementation
 
